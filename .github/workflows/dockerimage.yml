@@ -16,7 +16,7 @@ jobs:
   
     - name: Build the Docker image
       if: success()
-      run: docker build -t ${GITHUB_REPOSITORY}:app:latest .
+      run: docker build -t ${GITHUB_REPOSITORY}:latest .
     
     - name: Push to docker registry
       if: success()
