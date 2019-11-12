@@ -1,14 +1,25 @@
-name: Docker Image CI
+name: Docker Image Kubernetes addon-operator
 
 on: [push]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
+  
+    - name: Login to docker hub
+      uses: actions-hub/docker/login@master
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  
     - name: Build the Docker image
-      run: echo "docker build . --file Dockerfile --tag my-image-name:$(date +%s)"
+      if: success()
+      run: docker build -t ${GITHUB_REPOSITORY}:app:latest .
+    
+    - name: Push to docker registry
+      if: success()
+      uses: actions-hub/docker@master
+      with:
+        args: push ${GITHUB_REPOSITORY}:latest
